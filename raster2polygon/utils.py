@@ -3,7 +3,9 @@ import collections
 import functools
 import mercantile
 from glob import glob
+from pathlib import Path
 import warnings
+import re
 import cv2
 import pyproj
 import shapely.ops
@@ -296,3 +298,16 @@ def pixel_to_location(tile, dx, dy):
     lat = lerp(south, north, dy)
 
     return lon, lat
+
+
+def opening(mask, kernel_size):
+    """Morphologycal transforations of erosion the dilatation which removes small objects
+    Args:
+      mask: the binary mask to transform
+      eps: the opening kernel size, in pixel
+
+    Returns:
+      The transformed mask
+    """
+    struct = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_size, kernel_size))
+    return cv2.morphologyEx(mask, cv2.MORPH_OPEN, struct)

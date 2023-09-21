@@ -6,7 +6,14 @@ from .get_polygons import get_polygons
 from .merge_polygons import merge_polygons
 
 
-def polygonize(input_path: str, output_path: str, remove_inputs: False , simplify_tolerance = 0.01 , merging_distance_threshold=0.6) -> None:
+def polygonize(
+    input_path: str,
+    output_path: str,
+    remove_inputs: False,
+    simplify_tolerance=0.01,
+    merging_distance_threshold=0.5,
+    area_threshold=1,
+) -> None:
     """Polygonize raster tiles from the input path using AutoBFE's algorithm.
 
     There are two steps:
@@ -23,8 +30,9 @@ def polygonize(input_path: str, output_path: str, remove_inputs: False , simplif
         input_path: Path of the directory where the image files are stored.
         output_path: Path of the output file.
         remove_inputs: Clears the input image after geojson is produced
-        simplify_tolerance : the simplification accuracy as max. percentage of the arc length, in [0, 1]
-        merging_distance_threshold : Minimum distance to define adjacent polygons, in meters
+        simplify_tolerance : the simplification accuracy as max. percentage of the arc length, in [0, 1] , Percentage Tolerance= ( Tolerance in Meters​ / Arc Length in Meters)×100
+        merging_distance_threshold : Minimum distance to define adjacent polygons, in meters , default 0.5 m
+        area_threshold (float, optional): Threshold for filtering polygon areas. Defaults to 1 sqm.
 
     Example::
 
@@ -35,8 +43,18 @@ def polygonize(input_path: str, output_path: str, remove_inputs: False , simplif
     base_path = Path(output_path).parents[0]
     base_path.mkdir(exist_ok=True, parents=True)
 
-    get_polygons(input_path, "temp-labels.geojson", kernel_opening=1 , simplify_threshold= simplify_tolerance)
-    merge_polygons("temp-labels.geojson", output_path, distance_threshold=merging_distance_threshold)
+    get_polygons(
+        input_path,
+        "temp-labels.geojson",
+        kernel_opening=1,
+        simplify_threshold=simplify_tolerance,
+    )
+    merge_polygons(
+        "temp-labels.geojson",
+        output_path,
+        distance_threshold=merging_distance_threshold,
+        area_threshold=area_threshold,
+    )
     os.remove("temp-labels.geojson")
 
     if remove_inputs:

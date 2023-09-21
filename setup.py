@@ -34,6 +34,7 @@ setup(
         "geopandas<=0.10.2",
         "opencv-python==4.5.5.64",
         "opencv-python-headless<=4.7.0.68",
+        "mercantile==1.2.1",
         "shapely",
         "rasterio",
     ],
