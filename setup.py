@@ -32,6 +32,8 @@ setup(
         "pandas==1.5.3",
         "Pillow<=9.0.1",
         "geopandas<=0.10.2",
+        "opencv-python==4.5.5.64",
+        "opencv-python-headless<=4.7.0.68",
         "shapely",
         "rasterio",
     ],
